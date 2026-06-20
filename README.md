@@ -1,6 +1,6 @@
 # App quản lý chi tiêu cá nhân
 
-Ứng dụng React + Vite + Tailwind CSS để ghi nhanh các khoản chi tiêu hằng ngày. Dữ liệu được lưu trong `localStorage`, không cần backend.
+Ứng dụng React + Vite + Tailwind CSS để ghi nhanh các khoản chi tiêu hằng ngày. Dữ liệu được lưu online bằng Firebase Firestore để nhiều người có thể dùng chung trên GitHub Pages.
 
 ## Chức năng
 
@@ -8,6 +8,7 @@
 - Xóa khoản chi.
 - STT tự động theo thứ tự hiển thị.
 - Tổng chi tự động cập nhật.
+- Dữ liệu dùng chung giữa nhiều thiết bị qua Firebase Firestore.
 - Dữ liệu vẫn còn sau khi reload trang.
 - Tiền được hiển thị theo định dạng Việt Nam, ví dụ `60.000 đ`, `1.500.000 đ`.
 
@@ -22,6 +23,7 @@
 ├── vite.config.js
 └── src
     ├── App.jsx
+    ├── firebase.js
     ├── main.jsx
     ├── styles.css
     ├── components
@@ -65,17 +67,19 @@ npm run preview
 
 ## Deploy lên GitHub Pages
 
-### Cách 1: Dùng package `gh-pages`
+Project đang đặt base path cho repo `DailySpendly`:
 
-1. Tạo repository trên GitHub.
-2. Push source code lên repository đó.
-3. Chạy:
+```js
+base: '/DailySpendly/',
+```
+
+Deploy bằng:
 
 ```bash
 npm run deploy
 ```
 
-4. Vào GitHub repository:
+Sau đó vào GitHub repository:
 
 ```text
 Settings -> Pages
@@ -83,13 +87,39 @@ Settings -> Pages
 
 Chọn source là branch `gh-pages`.
 
-### Cách 2: Deploy bằng GitHub Actions
+Link sẽ có dạng:
 
-Có thể build project bằng lệnh:
-
-```bash
-npm ci
-npm run build
+```text
+https://<username>.github.io/DailySpendly/
 ```
 
-Sau đó publish thư mục `dist` lên GitHub Pages. File `vite.config.js` đã đặt `base: './'` để app chạy ổn khi được phục vụ từ GitHub Pages.
+## Firebase Firestore
+
+App đang dùng Firebase project `dailyspendly` và collection:
+
+```text
+expenses
+```
+
+Để mọi người mở link đều có thể xem, thêm và xóa khoản chi, vào Firebase Console:
+
+```text
+Firestore Database -> Rules
+```
+
+Trong giai đoạn dùng nội bộ, có thể đặt rules như sau:
+
+```js
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /expenses/{expenseId} {
+      allow read, create, delete: if true;
+      allow update: if false;
+    }
+  }
+}
+```
+
+Lưu ý: rules này nghĩa là ai có link web cũng có thể thêm và xóa dữ liệu. Khi cần an toàn hơn, hãy thêm đăng nhập hoặc mã PIN trước khi cho ghi/xóa.

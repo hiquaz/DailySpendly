@@ -1,6 +1,17 @@
 import { formatDate, formatMoney } from '../utils/formatters.js';
 
-export default function ExpenseTable({ expenses, onDeleteExpense }) {
+export default function ExpenseTable({ expenses, isLoading = false, onDeleteExpense }) {
+  if (isLoading) {
+    return (
+      <div className="px-4 py-10 text-center sm:px-6">
+        <p className="text-base font-semibold text-slate-800">Đang tải dữ liệu</p>
+        <p className="mt-1 text-sm text-slate-500">
+          Các khoản chi sẽ hiện ở đây sau khi kết nối Firestore.
+        </p>
+      </div>
+    );
+  }
+
   if (expenses.length === 0) {
     return (
       <div className="px-4 py-10 text-center sm:px-6">

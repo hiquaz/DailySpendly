@@ -5,7 +5,7 @@ const initialForm = {
   amount: '',
 };
 
-export default function ExpenseForm({ onAddExpense }) {
+export default function ExpenseForm({ onAddExpense, isSubmitting = false }) {
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState('');
 
@@ -69,9 +69,10 @@ export default function ExpenseForm({ onAddExpense }) {
 
         <button
           type="submit"
-          className="h-11 rounded-md bg-emerald-700 px-5 font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+          disabled={isSubmitting}
+          className="h-11 rounded-md bg-emerald-700 px-5 font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:bg-slate-400"
         >
-          Thêm
+          {isSubmitting ? 'Đang thêm' : 'Thêm'}
         </button>
       </div>
 
